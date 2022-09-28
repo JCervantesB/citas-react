@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import Error from "./Error";
+import Swal from 'sweetalert2';
 
-const Formulario = () => {
+const Formulario = ({pacientes, setPacientes}) => {
     const [nombre, setNombre] = useState('');
     const [propietario, setPropietario] = useState('');
     const [email, setEmail] = useState('');
@@ -12,12 +14,36 @@ const Formulario = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        if([nombre, propietario, email, fecha, sintomas].includes('')) {            
-            console.log('Todos los campos son obligatorios');
+        if([nombre, propietario, email, fecha, sintomas].includes('')) {                
             setError(true);
             return;
         }       
         setError(false);
+        // Objeto de Paciente
+        const objetoPaciente = {
+            nombre,
+            propietario,
+            email,
+            fecha,
+            sintomas
+        }
+        // Agregar el paciente al state
+        setPacientes([...pacientes, objetoPaciente]);
+
+        // Mostrar mensaje de exito
+        Swal.fire(
+            'Correcto',
+            'Paciente agregado correctamente',
+            'success'
+          )
+
+        // Reiniciar el formulario
+        setNombre('');
+        setPropietario('');
+        setEmail('');
+        setFecha('');
+        setSintomas('');
+
     }
 
     return (
@@ -33,8 +59,7 @@ const Formulario = () => {
                 onSubmit={handleSubmit}
                 className="bg-white shadow-md rounded-lg py-10 px-5 mb-10"
             >
-                {error && <p className="text-red-500 text-center border border-red-500 bg-red-100 p-3 mb-5 font-bold uppercase rounded">
-                    Todos los campos son obligatorios</p>}
+                { error && <Error><p>Todos los campos son obligatorios</p></Error> }
                 <div className="mb-5">
                 <label
                     htmlFor="mascota"
