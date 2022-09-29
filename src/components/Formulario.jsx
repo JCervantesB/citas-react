@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Error from "./Error";
 import Swal from 'sweetalert2';
 
-const Formulario = ({pacientes, setPacientes, paciente}) => {
+const Formulario = ({pacientes, setPacientes, paciente, setPaciente}) => {
     const [nombre, setNombre] = useState('');
     const [propietario, setPropietario] = useState('');
     const [email, setEmail] = useState('');
@@ -41,18 +41,36 @@ const Formulario = ({pacientes, setPacientes, paciente}) => {
             propietario,
             email,
             fecha,
-            sintomas,
-            id: generarId()
+            sintomas
         }
-        // Agregar el paciente al state
-        setPacientes([...pacientes, objetoPaciente]);
+        // Agregar el nuevo paciente al state o editarlo
+        if(paciente.id) {
+            objetoPaciente.id = paciente.id;
 
-        // Mostrar mensaje de exito
-        Swal.fire(
-            'Correcto',
-            'Paciente agregado correctamente',
-            'success'
-          )
+            const pacientesActualizados = pacientes.map(pacienteState => pacienteState.id === paciente.id ? objetoPaciente : pacienteState);
+            setPacientes(pacientesActualizados);
+            // Limpiar paciente del state
+            setPaciente({});
+
+            // Mostrar mensaje de exito
+            Swal.fire(
+                'Correcto',
+                'El paciente ha sido editado correctamente.',
+                'success'
+            );
+
+        } else {
+            // Agregar el objeto al state
+            objetoPaciente.id = generarId();
+            setPacientes([...pacientes, objetoPaciente]);
+            // Mostrar mensaje de exito
+            Swal.fire(
+                'Correcto',
+                'Paciente agregado correctamente',
+                'success'
+              )
+        }
+
 
         // Reiniciar el formulario
         setNombre('');
@@ -161,7 +179,7 @@ const Formulario = ({pacientes, setPacientes, paciente}) => {
                 <input
                 type="submit"
                 className="bg-cyan-600 w-full p-3 text-white uppercase font-bold hover:bg-cyan-900 rounded-md hover:pointer transition-colors"
-                value={"Agregar Paciente"}
+                value={paciente.id ? 'Editar Paciente' : 'Agregar Paciente'}
                 />
             </form>
         </div>

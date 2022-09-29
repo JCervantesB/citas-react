@@ -1,10 +1,34 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
+import Swal from 'sweetalert2'
 
 const iconoEditar = <FontAwesomeIcon icon={faEdit} />
 const iconoEliminar = <FontAwesomeIcon icon={faTrash} />
-const Paciente = ({paciente, setPaciente}) => {
-    const {nombre, propietario, email, fecha, sintomas} = paciente;
+
+const Paciente = ({paciente, setPaciente, eliminarPaciente}) => {
+    const {nombre, propietario, email, fecha, sintomas, id} = paciente;
+
+    const handleEliminar = () => {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Un paciente eliminado no se puede recuperar.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                eliminarPaciente(id);
+                Swal.fire(
+                    'Eliminado',
+                    'El paciente ha sido eliminado.',
+                    'success'
+                )
+            }
+        })
+    }
     
   return (
     <div className="m-3 bg-white shadow-md px-5 py-10 rounded-xl">
@@ -25,14 +49,16 @@ const Paciente = ({paciente, setPaciente}) => {
             </p>
             <div className="flex justify-between mt-10">
                 <button
+                    type='button'
                     className="bg-cyan-600 hover:bg-cyan-900 text-white font-bold py-2 px-4 rounded-lg transition-colors"
                     onClick={() => setPaciente(paciente)}
                 >
                     Editar {iconoEditar}
                 </button>
                 <button
+                    type='button'
                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
-                    
+                    onClick={handleEliminar}
                 >
                     Eliminar {iconoEliminar}
                 </button>
